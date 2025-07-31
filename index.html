@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Previsão do Tempo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    
+    body {
+      background-image: url('./russell.jpg');
+      background-size: cover;
+      background-position: left top;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', sans-serif;
+      max-height: 100%;
+      max-height: 100%;
+
+
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 34px;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 12px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background-color: #0078d7;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005aaf;
+    }
+    #resultado {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .icon {
+      font-size: 48px;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 20px;
+      }
+      input, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <h1>Previsão do Tempo Robinho 🌤️</h1>
+  <input type="text" id="cidade" placeholder="Digite a cidade..." />
+  <button onclick="buscarTempo()">Buscar</button>
+
+  <div id="resultado"></div>
+
+  <script>
+    async function buscarTempo() {
+      const cidade = document.getElementById('cidade').value;
+      const apiKey = 'c79e9c95a2fbcaf73302254c70ef39b4'; // Insira sua chave da OpenWeatherMap
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&units=metric&appid=${apiKey}&lang=pt_br`;
+
+      try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        if (dados.cod === 200) {
+          const icone = dados.weather[0].icon;
+          const descricao = dados.weather[0].description;
+          document.getElementById('resultado').innerHTML = `
+            <h2>${dados.name}, ${dados.sys.country}</h2>
+            <div class="icon">
+              <img src="https://openweathermap.org/img/wn/${icone}@2x.png" alt="${descricao}">
+            </div>
+            <p><strong>🌡️ Temperatura:</strong> ${dados.main.temp}°C</p>
+            <p><strong>☁️ Condição:</strong> ${descricao}</p>
+            <p><strong>💨 Vento:</strong> ${dados.wind.speed} m/s</p>
+          `;
+        } else {
+          document.getElementById('resultado').innerHTML = 'Cidade não encontrada!';
+        }
+      } catch (erro) {
+        document.getElementById('resultado').innerHTML = 'Erro ao buscar a previsão.';
+      }
+    }
+  </script>
+</body>
+</html>
